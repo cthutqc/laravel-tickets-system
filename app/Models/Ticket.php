@@ -45,4 +45,9 @@ class Ticket extends Model implements HasMedia
     {
         return $this->hasMany(Message::class);
     }
+
+    public function assignedTo():BelongsTo
+    {
+        return $this->belongsTo(User::class, 'assigned_to');
+    }
 }

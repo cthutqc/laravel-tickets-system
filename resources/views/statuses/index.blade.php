@@ -14,16 +14,30 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <x-card>
-                <table>
+                <table class="w-full">
+                    <thead>
+                    <tr>
+                        <th class="text-left">{{__('name')}}</th>
+                        <th class="text-left">{{__('action')}}</th>
+                    </tr>
+                    </thead>
                     @forelse($statuses as $status)
                         <tr>
                             <td>
                                 {{$status->title}}
                             </td>
+                            <td class="flex items-center flex-end space-x-2">
+                                <a href="{{route('statuses.edit', $status)}}">{{__('Edit')}}</a>
+                                <form action="{{route('statuses.destroy', $status)}}" method="POST" onsubmit="return confirm('Are you sure?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit">{{__('Delete')}}</button>
+                                </form>
+                            </td>
                         </tr>
                     @empty
                         <tr>
-                            <td>
+                            <td colspan="2">
                                 {{__('No statuses in this system')}}
                             </td>
                         </tr>

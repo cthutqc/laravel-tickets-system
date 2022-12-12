@@ -29,6 +29,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('/tickets', \App\Http\Controllers\TicketController::class);
     Route::put('/tickets/{ticket}/add_message', [\App\Http\Controllers\TicketController::class, 'addMessage'])->name('tickets.add_message');
+    Route::patch('/tickets/{ticket}/change_status', [\App\Http\Controllers\TicketController::class, 'changeStatus'])->name('tickets.change_status');
 
     Route::middleware(['role:admin'])->group(function () {
         Route::resource('/users', \App\Http\Controllers\UserController::class);
@@ -37,7 +38,8 @@ Route::middleware('auth')->group(function () {
         Route::resource('/statuses', \App\Http\Controllers\StatusController::class);
         Route::resource('/priorities', \App\Http\Controllers\PriorityController::class);
 
-        Route::patch('/tickets/{ticket}/change_status', [\App\Http\Controllers\TicketController::class, 'changeStatus'])->name('tickets.change_status');
+        Route::patch('/tickets/{ticket}/assign_to_agent', [\App\Http\Controllers\TicketController::class, 'assignToAgent'])->name('tickets.assign_to_agent');
+
     });
 
 });

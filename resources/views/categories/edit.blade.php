@@ -8,7 +8,7 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <x-card>
-                <form method="POST" action="{{ route('categorues.update', $category) }}" class="mt-6 space-y-6">
+                <form method="POST" action="{{ route('categories.update', $category) }}" class="mt-6 space-y-6">
                     @csrf
                     @method('PATCH')
 

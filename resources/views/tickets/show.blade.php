@@ -26,13 +26,40 @@
                     </div>
 
                     <div class="flex items-center gap-4">
-                        <x-primary-button>{{ __('Save') }}</x-primary-button>
+                        <x-primary-button>{{ __('Save new status') }}</x-primary-button>
                     </div>
                 </form>
 
             </x-card>
 
             @endhasanyrole
+
+            @role('admin')
+
+            <x-card>
+
+                <form action="{{route('tickets.assign_to_agent', $ticket)}}" method="POST">
+                    @csrf
+                    @method('PATCH')
+                    <div>
+                        <x-input-label for="assigned_to" :value="__('Agent')" />
+                        <select name="assigned_to">
+                            <option value>--ASSIGNED TO--</option>
+                            @foreach($agents as $agent)
+                                <option value="{{$agent->id}}" @selected(old('assigned_to', $ticket->assigned_to) == $agent->id)>{{$agent->name}}</option>
+                            @endforeach
+                        </select>
+                        <x-input-error class="mt-2" :messages="$errors->get('assigned_to')" />
+                    </div>
+
+                    <div class="flex items-center gap-4">
+                        <x-primary-button>{{ __('Assign ticket to agent') }}</x-primary-button>
+                    </div>
+                </form>
+
+            </x-card>
+
+            @endrole
 
             <x-card>
 

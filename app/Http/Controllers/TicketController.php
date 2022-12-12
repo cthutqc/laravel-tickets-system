@@ -7,6 +7,7 @@ use App\Models\Label;
 use App\Models\Priority;
 use App\Models\Status;
 use App\Models\Ticket;
+use App\Models\User;
 use http\Message;
 use Illuminate\Http\Request;
 
@@ -80,7 +81,11 @@ class TicketController extends Controller
 
         $statuses = Status::all();
 
-        return view('tickets.show', compact('ticket', 'statuses'));
+        $agents = User::whereHas('roles', function ($query){
+            $query->where('name', 'agent');
+        })->get();
+
+        return view('tickets.show', compact('ticket', 'statuses', 'agents'));
     }
 
     /**
@@ -91,7 +96,7 @@ class TicketController extends Controller
      */
     public function edit(Ticket $ticket)
     {
-        $this->authorize('view', $ticket);
+        return to_route('tickets.show', $ticket);
     }
 
     /**
@@ -123,6 +128,8 @@ class TicketController extends Controller
 
     public function changeStatus(Request $request, Ticket $ticket)
     {
+        $this->authorize('update', $ticket);
+
         $ticket->status()->associate($request->input('status'));
         $ticket->save();
 
@@ -136,6 +143,25 @@ class TicketController extends Controller
         $message->ticket()->associate($ticket);
 
         $message->save();
+
+        if($ticket->user_id == auth()->user()->id)
+        {
+            $ticket->status()->associate(1);
+
+            $ticket->save();
+        }
+
+        return back();
+    }
+
+    public function assignToAgent(Request $request, Ticket $ticket)
+    {
+        $this->authorize('update', $ticket);
+
+        if($request->input('assigned_to')) {
+            $ticket->assignedTo()->associate($request->input('assigned_to'));
+            $ticket->save();
+        }
 
         return back();
     }
