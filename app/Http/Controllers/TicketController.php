@@ -66,6 +66,12 @@ class TicketController extends Controller
 
         $ticket->save();
 
+        if (!is_null($request->input('attachments')[0])) {
+            foreach ($request->input('attachments') as $file) {
+                $ticket->addMediaFromDisk($file, 'public')->toMediaCollection();
+            }
+        }
+
         return to_route('tickets.index');
     }
 
@@ -164,5 +170,18 @@ class TicketController extends Controller
         }
 
         return back();
+    }
+
+    public function upload(Request $request)
+    {
+        $path = [];
+
+        if ($request->file('attachments')) {
+            foreach ($request->file('attachments') as $file) {
+                $path = $file->store('tmp', 'public');
+            }
+        }
+
+        return $path;
     }
 }

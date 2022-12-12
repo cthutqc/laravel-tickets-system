@@ -23,6 +23,10 @@
                         <x-input-error class="mt-2" :messages="$errors->get('message')" />
                     </div>
 
+                    <div class="mt-4">
+                        <input type="file" name="attachments[]" multiple>
+                    </div>
+
                     <div>
                         @forelse($labels as $label)
                             <input type="checkbox" name="labels[]" value="{{$label->id}}">{{$label->title}}

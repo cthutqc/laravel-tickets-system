@@ -86,6 +86,11 @@
                 @empty
                 @endforelse
 
+                @forelse($ticket->media as $media)
+                    <a href="{{$media->getUrl()}}" target="_blank"><img src="{{$media->getUrl()}}" class="h-32 w-auto"/></a>
+                @empty
+                @endforelse
+
                 <div>
                     <p>{{__('Label')}}</p>
                     @foreach($ticket->labels as $label)
