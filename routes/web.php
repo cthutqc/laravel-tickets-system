@@ -15,11 +15,18 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
+
+    if(Auth::check()) {
+        return to_route('dashboard');
+    }
     return view('welcome');
 });
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+
+    $tickets_count = \App\Models\Ticket::count();
+
+    return view('dashboard', compact('tickets_count'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {

@@ -8,6 +8,9 @@ use App\Models\Priority;
 use App\Models\Status;
 use App\Models\Ticket;
 use App\Models\User;
+use App\Notifications\AssignTicket;
+use App\Notifications\NewMessageOnTicket;
+use App\Notifications\NewTicketSubmitted;
 use http\Message;
 use Illuminate\Http\Request;
 
@@ -20,6 +23,7 @@ class TicketController extends Controller
      */
     public function index()
     {
+
         $tickets = Ticket::with('categories', 'labels', 'priority', 'status', 'messages')
             ->when(auth()->user()->hasRole('user'), function ($query){
                 $query->where('user_id', auth()->user()->id);
@@ -71,6 +75,9 @@ class TicketController extends Controller
                 $ticket->addMediaFromDisk($file, 'public')->toMediaCollection();
             }
         }
+
+        User::role('admin')
+            ->each(fn ($user) => $user->notify(new NewTicketSubmitted($ticket)));
 
         return to_route('tickets.index');
     }
@@ -157,6 +164,12 @@ class TicketController extends Controller
             $ticket->save();
         }
 
+        if(auth()->user()->roles->first()->name != 'user') {
+            User::find($ticket->user_id)->notify(new NewMessageOnTicket($message));
+        } else {
+            User::find($ticket->assigned_to)->notify(new NewMessageOnTicket($message));
+        }
+
         return back();
     }
 
@@ -168,6 +181,8 @@ class TicketController extends Controller
             $ticket->assignedTo()->associate($request->input('assigned_to'));
             $ticket->save();
         }
+
+        User::find($request->input('assigned_to'))->notify(new AssignTicket($ticket));
 
         return back();
     }

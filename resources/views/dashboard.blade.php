@@ -11,6 +11,9 @@
                 <div class="p-6 text-gray-900">
                     {{ __("You're logged in!") }}
                 </div>
+                <div class="p-6 text-gray-900">
+                    {{__('There are ')}} {{$tickets_count}} {{__('tickets in the system')}}
+                </div>
             </div>
         </div>
     </div>
